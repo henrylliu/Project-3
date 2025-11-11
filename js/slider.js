@@ -19,11 +19,8 @@ export function createTimeSlider({
     // ---- 1. Generate date list (YYYY-MM-01 for each month) ----
     const dates = [];
     for (let y = startYear; y <= endYear; y++) {
-        for (let m = 1; m <= 12; m++) {
-            dates.push(`${y}-${String(m).padStart(2, "0")}-01`);
-        }
+        dates.push(`${y}-01-01`);
     }
-    const dateObjects = dates.map(d => new Date(d));
     // ---- 2. Basic SVG setup ----
     const width = 1000;
     const height = 80;
@@ -44,7 +41,7 @@ export function createTimeSlider({
   
     // ---- 4. Axis (one tick per year) ----
     const tickIndices = [];
-    for (let i = 0; i < dates.length; i += 48) {
+    for (let i = 0; i < dates.length; i += 4) {
         tickIndices.push(i);
     }
     if (!tickIndices.includes(dates.length - 1)) tickIndices.push(dates.length - 1);

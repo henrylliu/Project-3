@@ -1,14 +1,18 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import * as topojson from "https://cdn.jsdelivr.net/npm/topojson-client@3/+esm";
 
 /**
  * createSouthAmericaMap
+ *
+ * Draws a simple D3 map of South America country outlines.
  * 
- * Renders a choropleth map of South America using TopoJSON and D3.
- * 
- * @param {Object[]} data - Array of { id: ISO_A3, value: number }
- * @param {String} parentSelector - CSS selector for parent element
- */
+ * This function takes pre-filtered South America GeoJSON features and renders
+ * their borders inside an SVG element. It is useful for overlaying vector
+ * boundaries on top of raster layers (e.g., MODIS imagery).
+ *
+ * @param {Object[]} southAmerica - Array of GeoJSON Feature objects representing South American countries.
+ * @param {string} selector - CSS selector of the container where the SVG map should be appended.
+ **/
+
 export function createSouthAmericaMap(southAmerica, selector) {
     const width = 0, height = 1000;
   

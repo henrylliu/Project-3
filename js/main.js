@@ -11,7 +11,7 @@ async function init() {
 
     // Filter South America
     const southAmericaCodes = new Set([
-        "032","068","076","152","170","218","328","600","604","740","858","862"
+        "032","068","076","152","170","218","250","328","600","604","740","858","862"
     ]);
     const southAmerica = countries.filter(d => southAmericaCodes.has(d.id));
 

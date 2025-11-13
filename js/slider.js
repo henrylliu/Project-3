@@ -29,7 +29,7 @@ export function createTimeSlider({
         .select(parentSelector)
         .append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
   
     const padding = 50;
   

@@ -4,7 +4,7 @@ import { addMODISLayer, updateMODISLayer } from "./modisLayer.js";
 import { createSubdivisionMap } from "./subDivisionMap.js";
 
 // Load admin-1 subdivisions
-const subdivisions = await d3.json("data/south_america_admin1.json");
+const subdivisions = await d3.json("data/south_america.json");
 window.subdivisions = subdivisions; // for console debugging
 
 // Amazon countries to highlight (you can use this later if needed)
@@ -13,8 +13,8 @@ const amazonCountries = new Set(["BRA","COL","PER","VEN","BOL","ECU","GUY","SUR"
 // Create projection matching MODIS extent
 const projection = d3.geoMercator()
     .center([-60, -15])   // roughly center of South America
-    .scale(940)           // adjust zoom as needed
-    .translate([368, 465]); // center SVG
+    .scale(975)           // adjust zoom as needed
+    .translate([360, 470]); // center SVG
 
 // Filter out mainland France (keep French Guiana)
 const filtered = {

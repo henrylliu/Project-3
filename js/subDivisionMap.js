@@ -42,5 +42,16 @@ export function createSubdivisionMap(subdivisions, selector, projection) {
         .attr("stroke", "#444")
         .attr("stroke-width", 1.5);
 
-    console.log("Subdivision map drawn with shared projection.");
+    // Add legend for MODIS layer
+    const legendWidth = 300;
+    const legendHeight = 300;
+    const padding = 20;
+
+    svg.append("image")
+        .attr("href", "https://gibs.earthdata.nasa.gov/legends/MODIS_Net_Photosynthesis_V.svg")
+        .attr("x", WIDTH - legendWidth - padding)
+        .attr("y", HEIGHT - legendHeight - padding)
+        .attr("width", legendWidth)
+        .attr("height", legendHeight)
+        .style("pointer-events", "none");
 }

@@ -6,15 +6,13 @@ export function createTimeSlider({
     endYear = 2024,
     onChange = () => {},
 }) {
-    // 1. Generate date list (yearly for now)
     const dates = [];
     for (let y = startYear; y <= endYear; y++) {
         dates.push(`${y}-01-01`);
     }
 
-    // 2. SVG setup
     const width = 1000;
-    const height = 120;
+    const height = 80;
     const padding = 80;
 
     const svg = d3.select(parentSelector)
@@ -22,57 +20,99 @@ export function createTimeSlider({
         .attr("width", width)
         .attr("height", height);
 
-    // 3. Scale
+    // Scale
     const xScale = d3.scaleLinear()
         .domain([0, dates.length - 1])
         .range([padding, width - padding]);
 
-    // 4. Track (background line)
+    // Slider track gradient
+    svg.append("defs")
+        .append("linearGradient")
+        .attr("id", "slider-gradient")
+        .attr("x1", "0%").attr("y1", "0%")
+        .attr("x2", "100%").attr("y2", "0%")
+        .selectAll("stop")
+        .data([
+            { offset: "0%", color: "#a0c4ff" },
+            { offset: "50%", color: "#4dabf5" },
+            { offset: "100%", color: "#1e90ff" }
+        ])
+        .enter()
+        .append("stop")
+        .attr("offset", d => d.offset)
+        .attr("stop-color", d => d.color);
+
+    // Track
     svg.append("line")
         .attr("x1", xScale(0))
         .attr("x2", xScale(dates.length - 1))
         .attr("y1", height / 2)
         .attr("y2", height / 2)
-        .attr("stroke", "#ddd")
-        .attr("stroke-width", 12)
+        .attr("stroke", "url(#slider-gradient)")
+        .attr("stroke-width", 14)
         .attr("stroke-linecap", "round");
 
-    // 5. Progress line (fill behind handle)
+    // Progress fill
     const progress = svg.append("line")
         .attr("x1", xScale(0))
         .attr("x2", xScale(0))
         .attr("y1", height / 2)
         .attr("y2", height / 2)
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 12)
+        .attr("stroke", "#1e90ff")
+        .attr("stroke-width", 14)
         .attr("stroke-linecap", "round");
 
-    // 6. Axis ticks
+    // Axis
     const tickIndices = [];
-    for (let i = 0; i < dates.length; i += 1) tickIndices.push(i);
+    for (let i = 0; i < dates.length; i++) tickIndices.push(i);
     const axis = d3.axisBottom(xScale)
         .tickValues(tickIndices)
         .tickFormat(i => dates[i].slice(0, 4));
 
     svg.append("g")
-        .attr("transform", `translate(0, ${height / 2 + 20})`) // push down a bit
+        .attr("transform", `translate(0, ${height / 2 + 20})`)
         .call(axis)
         .selectAll("text")
-        .style("font-size", "14px")
+        .style("font-size", "13px")
         .style("fill", "#333");
 
-    // 7. Handle
+    // Handle with shadow and hover effect
     const handle = svg.append("circle")
         .attr("cx", xScale(0))
         .attr("cy", height / 2)
-        .attr("r", 15)
-        .attr("fill", "steelblue")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 2)
+        .attr("r", 16)
+        .attr("fill", "#fff")
+        .attr("stroke", "#1e90ff")
+        .attr("stroke-width", 3)
         .style("cursor", "grab")
-        .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.3))");
+        .style("filter", "drop-shadow(0 3px 6px rgba(0,0,0,0.2))")
+        .on("mouseover", () => handle.transition().duration(100).attr("r", 20))
+        .on("mouseout", () => handle.transition().duration(100).attr("r", 16));
 
-    // 8. Drag behavior
+    // // Tooltip
+    // const tooltip = d3.select(parentSelector)
+    //     .append("div")
+    //     .style("position", "absolute")
+    //     .style("background", "rgba(0,0,0,0.75)")
+    //     .style("color", "#fff")
+    //     .style("padding", "4px 8px")
+    //     .style("border-radius", "4px")
+    //     .style("font-size", "12px")
+    //     .style("pointer-events", "none")
+    //     .style("opacity", 0);
+
+    function showTooltip(dateStr, x, y) {
+        tooltip.style("opacity", 1)
+            .html(dateStr)
+            .style("left", `${x}px`)
+            .style("top", `${y - 30}px`);
+    }
+
+    function hideTooltip() {
+        tooltip.style("opacity", 0);
+    }
+
+    // Drag behavior
     const drag = d3.drag()
         .on("drag", event => {
             const rawIndex = xScale.invert(event.x);
@@ -81,22 +121,25 @@ export function createTimeSlider({
             handle.attr("cx", xScale(clampedIndex));
             progress.attr("x2", xScale(clampedIndex));
             onChange(dates[clampedIndex]);
-        });
+            // showTooltip(dates[clampedIndex], event.x + 20, height / 2);
+        })
+        // .on("end", hideTooltip);
+
     handle.call(drag);
 
-    // 9. Click behavior
+    // Click to move handle
     svg.on("click", event => {
         if (event.target === handle.node()) return;
         const [mouseX] = d3.pointer(event);
         const rawIndex = xScale.invert(mouseX);
         const nearestIndex = Math.max(0, Math.min(dates.length - 1, Math.round(rawIndex)));
 
-        handle.transition().duration(200).attr("cx", xScale(nearestIndex));
-        progress.transition().duration(200).attr("x2", xScale(nearestIndex));
+        handle.transition().duration(250).attr("cx", xScale(nearestIndex));
+        progress.transition().duration(250).attr("x2", xScale(nearestIndex));
         onChange(dates[nearestIndex]);
     });
 
-    // 10. Programmatic control
+    // Programmatic control
     function setDate(dateStr) {
         const index = dates.indexOf(dateStr);
         if (index !== -1) {
@@ -106,7 +149,7 @@ export function createTimeSlider({
         }
     }
 
-    onChange(dates[0]); // initial value
+    onChange(dates[0]); // emit initial value
 
     return { setDate, dates };
 }

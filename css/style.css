@@ -16,3 +16,15 @@ body {
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
+
+#legend-container {
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.85);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  

@@ -3,6 +3,7 @@ import * as topojson from "https://cdn.jsdelivr.net/npm/topojson-client@3/+esm";
 import { createTimeSlider } from "./slider.js";
 import { createSouthAmericaMap } from "./southAmericaMap.js";
 import { addMODISLayer, updateMODISLayer } from "./modisLayer.js";
+import { createColorbarLegend } from "./legend.js";
 
 async function init() {
     // Load world TopoJSON
@@ -28,6 +29,9 @@ async function init() {
         endYear: 2024,
         onChange: (date) => updateMODISLayer(date)
     });
+
+    // Add legend
+    createColorbarLegend("#legend-container");
 }
 
 init();

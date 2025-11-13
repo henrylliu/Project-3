@@ -62,51 +62,9 @@ export function addMODISLayer(parentSelector, dateStr = "2020-01-01") {
   img.attr("src", buildWMSUrl(dateStr));
 }
 
-// export function updateMODISLayer(dateStr) {
-//   d3.select("#modis-image").attr("src", buildWMSUrl(dateStr));
-// }
-
-export function updateMODISLayer(dateValue) {
-  // dateValue might be fractional (e.g., 2010.25)
-  const baseYear = Math.floor(dateValue);
-  const nextYear = Math.min(baseYear + 1, 2024);
-  const alpha = dateValue - baseYear;
-
-  const baseDateStr = `${baseYear}-01-01`;
-  const nextDateStr = `${nextYear}-01-01`;
-
-  let img1 = d3.select("#modis-base");
-  let img2 = d3.select("#modis-next");
-
-  if (img1.empty()) {
-    img1 = d3.select("#map-container").append("img")
-      .attr("id", "modis-base")
-      .style("position", "absolute")
-      .style("top", 0)
-      .style("left", 0)
-      .style("width", "800px")
-      .style("height", "1300px")
-      .style("z-index", 0);
-  }
-
-  if (img2.empty()) {
-    img2 = d3.select("#map-container").append("img")
-      .attr("id", "modis-next")
-      .style("position", "absolute")
-      .style("top", 0)
-      .style("left", 0)
-      .style("width", "800px")
-      .style("height", "1300px")
-      .style("z-index", 1);
-  }
-
-  img1.attr("src", buildWMSUrl(baseDateStr));
-  img2.attr("src", buildWMSUrl(nextDateStr));
-
-  img1.style("opacity", 1 - alpha);
-  img2.style("opacity", alpha);
+export function updateMODISLayer(dateStr) {
+  d3.select("#modis-image").attr("src", buildWMSUrl(dateStr));
 }
-
 
 export function setMODISBBox(bbox) {
   DEFAULT_BBOX = bbox;

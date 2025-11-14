@@ -15,7 +15,77 @@
         <div id="slider-container"></div>
         <div id="map-container"></div>
     </div>
+    <!-- Visual separator -->
+    <hr style="max-width: 850px; margin: 80px auto; border: none; border-top: 2px solid #e0e0e0;">
 
+    <!-- Writeup Section -->
+    <section id="writeup" style="max-width: 850px; margin: 60px auto; line-height: 1.8; font-family: system-ui, sans-serif; padding: 0 20px;">
+      <h2 style="text-align: center; margin-bottom: 30px; color: #1e90ff;">Design Rationale & Development Overview</h2>
+      
+      <p style="margin-bottom: 20px;">
+        This visualization explores vegetation change across South America from 2005-2024 using NASA's MODIS Net Photosynthesis dataset, where higher values reflect greater photosynthetic activity and vegetation health.
+      </p>
+
+      <h3 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Design Rationale</h3>
+      
+      <p style="margin-bottom: 15px;">
+        <strong>Data Selection:</strong> Our initial goal was to acquire raw satellite data and convert it into a CSV file. However, we quickly realized that this was impractical, as it takes 336 GB of storage to get even one day of the Net Photosynthesis Data, we decided against this and decided to use an API call to paste the image onto our website.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        <strong>Time Slider:</strong> Since our project focuses on changes within the Amazon Rainforest over a 20-year period (2005-2024), we needed an intuitive way to navigate through time. We considered creating an animated timeline that would automatically cycle through years, but decided a manual slider would be more effective—allowing users to control the pace of exploration, compare specific years, and pause on periods of interest. We implemented a drag-and-release mechanism where visual feedback occurs during dragging, but data loading only happens on release, preventing performance issues from rapid scrubbing.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        <strong>Layer Selection:</strong> Our original plans included allowing users to switch between multiple MODIS layers, potentially with the ability to plot multiple layers at the same time. However, due to time constraints we unfortunately were unable to implement this feature in time and instead decided to show net photosynthesis activity (over an 8 day period) between the different years.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        <strong>Color Encoding:</strong> The NASA MODIS data originally uses a continuous rainbow color scheme (red for low activity, indigo for high activity), which can be difficult to interpret and doesn't clearly convey "no activity" regions. We transformed this into a 6-category discrete scale using client-side Canvas processing:
+      </p>
+      <ul style="margin-left: 40px; margin-bottom: 15px; line-height: 1.8;">
+        <li>White: No photosynthetic activity (0 kgC/m²)</li>
+        <li>Brown to Tan: Very low to low activity (0.0005-0.048 kgC/m²)</li>
+        <li>Yellow-Green to Dark Green: Medium to very high activity (0.048-0.12 kgC/m²)</li>
+      </ul>
+      <p style="margin-bottom: 15px;">
+        This redesign provides three key benefits: (1) clearer visual distinction between activity levels, (2) intuitive color progression from "dead" (white/brown) to "thriving" (green), and (3) quantitative values mapped to each category, allowing users to understand photosynthetic activity
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        <strong>Contextual Timeline:</strong> To help users understand <em>why</em> photosynthetic patterns change, we added a dynamic events panel that displays notable environmental, political, and climate events for each year (e.g., 2019 Amazon wildfires, 2020 COVID-19 pandemic effects, major drought years). This connects the data to real-world events and helps frame the visualization in broader ecological and societal contexts.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        <strong>Country and Province Borders:</strong> To enhance spatial context, we obtained GeoJSON files of South American country and provincial boundaries from Mapshaper.org. We used D3.js to overlay these boundaries on top of the MODIS imagery. While we tried to create a tooltip or gray out non Amazonian regions, due to difficulties working with the transform and projection functions we were unfortunately unable to accomplish this in time. Nevertheless, the boundaries provide useful geographical reference points for interpreting the data.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        <strong>Performance Optimizations:</strong> Since we're processing large images client-side, we implemented several performance enhancements: a request queue system to prevent simultaneous image loads, a loading indicator for user feedback, and conditional rendering that only processes images when the user commits to a date selection (not during active dragging).
+      </p>
+
+      <h3 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Development Process</h3>
+      
+      <p style="margin-bottom: 15px;">
+        We were initially brainstorming whether to do a project on the color change of ocean water between the Pacific/Atlantic, or the vegetation change within the Amazon, but ended up picking the Amazon Rainforest vegetation option since we thought it would look better and more recognizable with the South America map isolated.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        Jimmy handled most of the work with developing the initial product up until the checkpoint, creating a Jupyter notebook to explore and wrangle with the dataset, preparing the data and finding patterns for us to use and apply in our visualization. This led us to decide on our final product's concept, which is the map you see above.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        Using NASA's GIBS WMS API, we used MODIS imagery of photosynthesis levels as a color-coded way to show vegetation health. While this was in the shape of South America, however, there was no clear distinction of the specific subregions between the different areas of South America. To fix this, we added a D3 GeoJSON map layer, by iteratively adding the country boundaries from a JSON country border file, so the MODIS colors and vector boundaries aligned cleanly. 
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        Henry handled the main visualization implementation, including the time slider that dynamically updates the MODIS API request URL so colors change as users move through years. Additionally, Henry added the client side Canvas processing to allow for the graph to be shown with discrete colors instead of continuous ones. A legend was added to explain the MODIS color meanings and net photosynthesis average. Additionally, Henry added the country and province borders for the data and also the contextual timeline.
+      </p>
+
+      <p style="margin-bottom: 15px;">
+        Brian handled refinements and finishing touches throughout the process, brainstorming and implementing ways to enhance functionality and appearance across all aspects of the visualization—from the slider mechanics to the legend design to the MODIS layer processing. Our process involved extensive iterative trial and error, which ultimately resulted in a robust, accurate, and user-friendly visualization.
+      </p>
+    </section>
     <script type="module" src="js/main.js"></script>
 
 </body>
